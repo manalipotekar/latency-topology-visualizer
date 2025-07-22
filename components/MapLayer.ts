@@ -57,4 +57,18 @@ export function setupLayers(map: mapboxgl.Map) {
       'circle-stroke-color': '#ffffff',
     },
   });
+  map.addLayer({
+  id: 'latency-lines',
+  type: 'line',
+  source: 'latency-lines',
+  layout: {
+    'line-join': 'round',
+    'line-cap': 'round',
+  },
+  paint: {
+    'line-color': '#ff8800',
+    'line-width': 2,
+  },
+});
+
 }

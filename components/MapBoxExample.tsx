@@ -348,14 +348,13 @@ return (
     <div ref={mapContainerRef} style={{ width: '100%', height: '100%' }} />
 
     {selectedConnection && (
-        <div style={{ position: 'absolute', bottom: 10, right: 10, zIndex: 5 }}>
+        <div style={{ position: 'absolute', bottom: 10, left: 10, zIndex: 5 }}>
       <LatencyChartPanel
         sourceId={selectedConnection.sourceId}
         targetId={selectedConnection.targetId}
       />
       </div>
     )}
-
     <MapOverlay selectedFeature={selectedFeature} />
   </div>
 );

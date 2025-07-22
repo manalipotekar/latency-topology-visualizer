@@ -1,35 +1,31 @@
-type LatencyEntry = { timestamp: number; latency: number };
+export type TimeRange = '1h' | '24h' | '7d' | '30d';
 
-export function generateLatencyHistory(
+export interface LatencyDataPoint {
+  timestamp: number; // Unix timestamp (ms)
+  latency: number;   // Latency in ms
+}
+
+export function generateLatencyData(
   sourceId: string,
   targetId: string,
-  timeRange: '1h' | '24h' | '7d' | '30d'
-): LatencyEntry[] {
+  range: TimeRange
+): LatencyDataPoint[] {
   const now = Date.now();
-  let interval = 0;
-  let points = 0;
+  const intervals: Record<TimeRange, number> = {
+    '1h': 60,
+    '24h': 60 * 24,
+    '7d': 60 * 24 * 7,
+    '30d': 60 * 24 * 30,
+  };
 
-  switch (timeRange) {
-    case '1h':
-      interval = 60 * 1000; // 1 min
-      points = 60;
-      break;
-    case '24h':
-      interval = 60 * 60 * 1000; // 1 hr
-      points = 24;
-      break;
-    case '7d':
-      interval = 6 * 60 * 60 * 1000; // 6 hr
-      points = 28;
-      break;
-    case '30d':
-      interval = 24 * 60 * 60 * 1000; // 1 day
-      points = 30;
-      break;
+  const count = intervals[range];
+  const data: LatencyDataPoint[] = [];
+
+  for (let i = count - 1; i >= 0; i--) {
+    const timestamp = now - i * 60 * 1000; // every minute
+    const latency = 20 + Math.random() * 80; // random latency between 20ms and 100ms
+    data.push({ timestamp, latency });
   }
 
-  return Array.from({ length: points }).map((_, i) => ({
-    timestamp: now - (points - i) * interval,
-    latency: Math.floor(Math.random() * 50) + 10, // Random 10–60 ms
-  }));
+  return data;
 }

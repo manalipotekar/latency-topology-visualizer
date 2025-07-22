@@ -109,7 +109,7 @@ export function setupInteractions(
   map: mapboxgl.Map,
   setSelectedFeature: (f: any) => void,
   selectedFeatureRef: React.MutableRefObject<any>,
-  setSelectedConnection: (pair: { sourceId: string; targetId: string }) => void
+  setSelectedConnection: (pair: { sourceId: string; targetId: string } | null) => void
 ) {
     let lastClickedId: string | null = null;
 
@@ -118,15 +118,10 @@ export function setupInteractions(
     if (!feature || feature.properties?.id == null) return;
       const clickedId = feature.properties.id;
       // 👉 Handle connection logic
-  if (lastClickedId && lastClickedId !== clickedId) {
-    setSelectedConnection({
-      sourceId: lastClickedId,
-      targetId: clickedId,
-    });
-    lastClickedId = null;
-  } else {
-    lastClickedId = clickedId;
-  }
+    if (feature) {
+      setSelectedFeature(feature);
+      setSelectedConnection(null); // clear any line selection
+    }
 
     if (selectedFeatureRef.current) {
       map.setFeatureState(
@@ -180,6 +175,17 @@ export function setupInteractions(
         { source: 'datacenters', id: feature.properties.id },
         { highlight: false }
       );
+    }
+  });
+    map.on('click', 'latency-lines', (e) => {
+    const feature = e.features?.[0];
+    if (feature?.properties?.sourceId && feature?.properties?.targetId) {
+      console.log('Line clicked:', feature.properties);
+      setSelectedConnection({
+        sourceId: feature.properties.sourceId,
+        targetId: feature.properties.targetId
+      });
+      setSelectedFeature(null); // clear any point selection
     }
   });
 
