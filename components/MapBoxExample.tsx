@@ -16,7 +16,7 @@ import LatencyChartPanel from './LatencyChartPanel';
 
 mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN as string;
 
-const MapboxExample: React.FC = () => {
+const MapBoxExample: React.FC = () => {
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<mapboxgl.Map | null>(null);
   const [selectedFeature, setSelectedFeature] = useState(null);
@@ -53,7 +53,7 @@ const MapboxExample: React.FC = () => {
     map.addControl(new mapboxgl.NavigationControl(), 'top-left');
 
     map.addControl(new mapboxgl.FullscreenControl(), 'top-left');
-    
+
     map.addControl(new mapboxgl.GeolocateControl({
       positionOptions: {
         enableHighAccuracy: true
@@ -87,4 +87,5 @@ return (
 );
 };
 
-export default MapboxExample;
+export default MapBoxExample;
+
