@@ -28,29 +28,28 @@ const LatencyChartPanel: React.FC<Props> = ({ sourceId, targetId }) => {
   };
 
   return (
-    <div style={{ background: '#fff', padding: 16, borderRadius: 8, boxShadow: '0 2px 10px rgba(0,0,0,0.2)', width: 400 }}>
-      <h4>Latency Trends: {sourceId} ➝ {targetId}</h4>
+    <div style={{ background:  '#303030ff', padding: 16, borderRadius: 8, boxShadow: '0 2px 10px rgba(0,0,0,0.2)', width: 400,opacity: 0.8 }}>
+      <h4 className='pb-1'>Latency Trends: {sourceId} ➝ {targetId}</h4>
       
       {/* Time Range Selector */}
-      <div style={{ marginBottom: 12 }}>
-        {timeRanges.map(range => (
-          <button
-            key={range}
-            onClick={() => setTimeRange(range)}
-            style={{
-              marginRight: 8,
-              padding: '4px 10px',
-              background: timeRange === range ? '#0070f3' : '#e0e0e0',
-              color: timeRange === range ? '#fff' : '#000',
-              border: 'none',
-              borderRadius: 4,
-              cursor: 'pointer'
-            }}
-          >
-            {range}
-          </button>
-        ))}
-      </div>
+<div className="mb-2  flex flex-wrap gap-2">
+  {timeRanges.map(range => (
+    <button
+      key={range}
+      onClick={() => setTimeRange(range)}
+      className={`px-3 py-1 rounded cursor-pointer transition-opacity duration-200
+        ${
+          timeRange === range
+            ? 'bg-blue-600 text-white opacity-100'
+            : 'bg-gray-50 text-black opacity-70 hover:opacity-100'
+        }`}
+    >
+      {range}
+    </button>
+  ))}
+</div>
+
+
 
       {/* Chart */}
       <ResponsiveContainer width="100%" height={200}>
@@ -70,7 +69,7 @@ const LatencyChartPanel: React.FC<Props> = ({ sourceId, targetId }) => {
       </ResponsiveContainer>
 
       {/* Stats */}
-      <div style={{ marginTop: 10 }}>
+      <div style={{ marginTop: 1, color: '#e7e7e7ff' }}>
         <p><strong>Min:</strong> {stats.min.toFixed(2)} ms</p>
         <p><strong>Max:</strong> {stats.max.toFixed(2)} ms</p>
         <p><strong>Avg:</strong> {stats.avg} ms</p>
