@@ -16,7 +16,7 @@ function animatePulse(map: mapboxgl.Map) {
   let phase = 0;
 
   function frame() {
-    phase = (phase + 0.01) % 1;
+    phase = (phase + 0.015) % 1;
 
     const pulseExpression = [
       'interpolate',
@@ -70,7 +70,7 @@ export function setupLayers(map: mapboxgl.Map) {
         type: 'geojson',
         data: arcLine,
       });
-      
+
   map.addLayer({
   id: 'arc-layer',
   type: 'line',

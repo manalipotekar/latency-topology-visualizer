@@ -13,38 +13,53 @@ interface MapOverlayProps {
   } | null;
 }
 
+
 const MapOverlay: React.FC<MapOverlayProps> = ({ selectedFeature }) => {
   if (!selectedFeature) return null;
 
   const properties = selectedFeature.properties || {};
   const { id, provider, location, type, region, latency } = properties;
+    const exchangeName =
+    type === 'exchange'
+      ? id
+      : `${provider} - ${location}`;
 
-  const latencyNode: React.ReactNode = (() => {
-    try {
-      const parsed = JSON.parse(latency || '{}');
-      return (
-        <ul className="pl-4 list-disc list-inside">
-          {Object.entries(parsed).map(([key, val]) => (
-            <li key={key}>
-              {key.toUpperCase()}: {String(val)}ms
-            </li>
-          ))}
-        </ul>
-      );
-    } catch {
-      return 'N/A';
-    }
-  })();
+const latencyNode: React.ReactNode = (() => {
+  try {
+    const parsed = JSON.parse(latency || '{}');
+    const getColorClass = (key: string): string => {
+      switch (key.toLowerCase()) {
+        case 'aws':
+          return 'bg-yellow-400';
+        case 'gcp':
+        case 'google':
+          return 'bg-green-400';
+        case 'azure':
+          return 'bg-blue-400';
+        default:
+          return 'bg-gray-400';
+      }
+    };
+
+    return (
+      <ul className="pl-2 space-y-1">
+        {Object.entries(parsed).map(([key, val]) => (
+          <li key={key} className="flex items-center space-x-2">
+            <span className={`w-2.5 h-2.5 rounded-full ${getColorClass(key)}`}></span>
+            <span className="text-white">{key.toUpperCase()}: {String(val)}ms</span>
+          </li>
+        ))}
+      </ul>
+    );
+  } catch {
+    return 'N/A';
+  }
+})();
+
 
   const displayFields: { label: string; value: React.ReactNode }[] = [
-    {
-      label: 'Exchange Name',
-      value: `${provider} - ${location} (${id})`,
-    },
-    {
-      label: 'Cloud Provider',
-      value: provider,
-    },
+    { label: 'Exchange Name', value: exchangeName },
+    { label: 'Cloud Provider', value: provider },
     ...(type === 'cloud'
       ? [{ label: 'Region', value: region }]
       : []),

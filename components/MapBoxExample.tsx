@@ -46,7 +46,6 @@ const MapBoxExample: React.FC = () => {
         data: buildGeoJsonLines(),
         lineMetrics: true,
       });
-      //  map.addLayer(arcLayer1);
 
       setupLayers(map);
       setupInteractions(
@@ -58,11 +57,8 @@ const MapBoxExample: React.FC = () => {
     });
 
     map.setBearing(30); // Rotate the globe
-
     map.addControl(new mapboxgl.NavigationControl(), "top-left");
-
     map.addControl(new mapboxgl.FullscreenControl(), "top-left");
-
     map.addControl(
       new mapboxgl.GeolocateControl({
         positionOptions: {
@@ -75,7 +71,7 @@ const MapBoxExample: React.FC = () => {
     );
 
     const updateLatencyData = () => {
-      const updatedLines = buildGeoJsonLines(); // This should return new latency values
+      const updatedLines = buildGeoJsonLines();
       const source = mapRef.current?.getSource(
         "latency-lines"
       ) as mapboxgl.GeoJSONSource;
@@ -86,8 +82,6 @@ const MapBoxExample: React.FC = () => {
 
     // Update every 7 seconds
     const intervalId = setInterval(updateLatencyData, 7000);
-
-    // Cleanup interval when component unmounts
     return () => {
       clearInterval(intervalId);
       map.remove();
@@ -101,15 +95,12 @@ const MapBoxExample: React.FC = () => {
   return (
     <div style={{ position: "relative", width: "100%", height: "100vh" }}>
       <div ref={mapContainerRef} style={{ width: "100%", height: "100%" }} />
-
-      {selectedConnection && (
         <div style={{ position: "absolute", bottom: 10, left: 10, zIndex: 5 }}>
           <LatencyChartPanel
-            sourceId={selectedConnection.sourceId}
-            targetId={selectedConnection.targetId}
+            sourceId={selectedConnection?.sourceId || ""}
+            targetId={selectedConnection?.targetId || ""}
           />
         </div>
-      )}
       <MapOverlay selectedFeature={selectedFeature} />
     </div>
   );

@@ -7,8 +7,6 @@ export function setupInteractions(
   selectedFeatureRef: React.MutableRefObject<any>,
   setSelectedConnection: (pair: { sourceId: string; targetId: string } | null) => void
 ) {
-    let lastClickedId: string | null = null;
-
   map.on('click', 'datacenter-layer', (e) => {
     const feature = e.features?.[0];
     if (!feature || feature.properties?.id == null) return;
@@ -75,9 +73,9 @@ export function setupInteractions(
   map.on('mouseenter', 'latency-lines-layer', () => {
   map.getCanvas().style.cursor = 'pointer';
 });
-map.on('mouseleave', 'latency-lines-layer', () => {
-  map.getCanvas().style.cursor = '';
-});
+// map.on('mouseleave', 'latency-lines-layer', () => {
+//   map.getCanvas().style.cursor = '';
+// });
     map.on('click', 'latency-lines-layer', (e) => {
     const feature = e.features?.[0];
     if (feature?.properties?.sourceId && feature?.properties?.targetId) {
@@ -90,7 +88,8 @@ map.on('mouseleave', 'latency-lines-layer', () => {
     }
   });
 
-//   animatePulseLines();
+
+  // animatePulseLines();
 
 function animatePulseLines() {
   let phase = 0;
