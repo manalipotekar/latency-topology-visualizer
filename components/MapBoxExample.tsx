@@ -16,6 +16,8 @@ import LatencyChartPanel from './LatencyChartPanel';
 
 mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN as string;
 
+
+
 const MapBoxExample: React.FC = () => {
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<mapboxgl.Map | null>(null);
@@ -45,11 +47,25 @@ const MapBoxExample: React.FC = () => {
       const lineGeoJson = buildGeoJsonLines();
 
       map.addSource('datacenters', { type: 'geojson', data: pointGeoJson });
-      map.addSource('latency-lines', { type: 'geojson', data: lineGeoJson, lineMetrics: true });
+      // map.addSource('latency-lines', { type: 'geojson', data: lineGeoJson, lineMetrics: true });
+      // map.addSource('latency-lines', {
+      //   type: 'geojson',
+      //   data: createLatencyGeojson()
+      // });
+      map.addSource('latency-lines', {
+        type: 'geojson',
+        data: buildGeoJsonLines()
+        
+      });
 
       setupLayers(map);
       setupInteractions(map, setSelectedFeature, selectedFeatureRef,setSelectedConnection);
+
     });
+
+
+    
+
     map.addControl(new mapboxgl.NavigationControl(), 'top-left');
 
     map.addControl(new mapboxgl.FullscreenControl(), 'top-left');
@@ -62,7 +78,24 @@ const MapBoxExample: React.FC = () => {
       showUserHeading: true
     }), 'top-left');
 
-    return () => map.remove();
+    const updateLatencyData = () => {
+  const updatedLines = buildGeoJsonLines(); // This should return new latency values
+  const source = mapRef.current?.getSource('latency-lines') as mapboxgl.GeoJSONSource;
+  if (source) {
+    source.setData(updatedLines);
+  }
+};
+
+// Update every 7 seconds
+const intervalId = setInterval(updateLatencyData, 7000);
+
+// Cleanup interval when component unmounts
+return () => {
+  clearInterval(intervalId);
+  map.remove();
+};
+
+    
   }, []);
 
   useEffect(() => {

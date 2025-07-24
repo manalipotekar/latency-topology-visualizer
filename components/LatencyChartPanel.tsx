@@ -4,6 +4,7 @@ import {
   LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid
 } from 'recharts';
 import { generateLatencyData, LatencyDataPoint, TimeRange } from '@/utils/latencySimulator';
+import { Console } from 'console';
 
 interface Props {
   sourceId: string;
@@ -18,6 +19,7 @@ const LatencyChartPanel: React.FC<Props> = ({ sourceId, targetId }) => {
 
   useEffect(() => {
     const data = generateLatencyData(sourceId, targetId, timeRange);
+    console.log("Generated latency data:", data);
     setLatencyData(data);
   }, [sourceId, targetId, timeRange]);
 

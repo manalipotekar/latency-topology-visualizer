@@ -72,7 +72,13 @@ export function setupInteractions(
       );
     }
   });
-    map.on('click', 'latency-lines', (e) => {
+  map.on('mouseenter', 'latency-lines-layer', () => {
+  map.getCanvas().style.cursor = 'pointer';
+});
+map.on('mouseleave', 'latency-lines-layer', () => {
+  map.getCanvas().style.cursor = '';
+});
+    map.on('click', 'latency-lines-layer', (e) => {
     const feature = e.features?.[0];
     if (feature?.properties?.sourceId && feature?.properties?.targetId) {
       console.log('Line clicked:', feature.properties);

@@ -64,14 +64,14 @@ export function setupLayers(map: mapboxgl.Map) {
         '#ff0000'  // Red
       ],
       // this will be overwritten by animation
-      'line-gradient': [
-        'interpolate',
-        ['linear'],
-        ['line-progress'],
-        0, 'rgba(255,255,255,0)',
-        0.5, 'rgba(255,255,255,1)',
-        1, 'rgba(255,255,255,0)'
-      ],
+      // 'line-gradient': [
+      //   'interpolate',
+      //   ['linear'],
+      //   ['line-progress'],
+      //   0, 'rgba(255,255,255,0)',
+      //   0.5, 'rgba(255,255,255,1)',
+      //   1, 'rgba(255,255,255,0)'
+      // ],
     },
   });
 
@@ -110,19 +110,6 @@ export function setupLayers(map: mapboxgl.Map) {
     },
   });
 
-  map.addLayer({
-    id: 'latency-lines',
-    type: 'line',
-    source: 'latency-lines',
-    layout: {
-      'line-join': 'round',
-      'line-cap': 'round',
-    },
-    paint: {
-      'line-color': '#ff8800', // Base color for lines
-      'line-width': 2,
-    },
-  });
   
   map.addLayer({
   id: 'exchange-layer',

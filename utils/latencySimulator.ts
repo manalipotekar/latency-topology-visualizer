@@ -26,6 +26,8 @@ export function generateLatencyData(
     const latency = 20 + Math.random() * 80; // random latency between 20ms and 100ms
     data.push({ timestamp, latency });
   }
+  console.log(`Generated ${count} data points for ${sourceId} ➝ ${targetId} (${range})`);
+  console.log("Latency data:", data);
 
   return data;
 }
