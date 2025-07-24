@@ -1,5 +1,6 @@
 import { dataCenters } from '../data/exchange_servers'; // Assuming data is imported from the right path
 import { FeatureCollection, Feature, LineString } from 'geojson';
+import * as turf from '@turf/turf';
 type CloudProvider = 'aws' | 'gcp' | 'azure';
 
 export const buildGeoJsonPoints = (): GeoJSON.FeatureCollection => ({
