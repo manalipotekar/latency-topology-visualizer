@@ -69,7 +69,7 @@ const latencyNode: React.ReactNode = (() => {
   ];
 
   return (
-    <div className="absolute top-4 right-4 z-50 w-[250px] font-sans text-sm">
+    <div className="absolute top-100 right-4 z-50 w-[250px] font-sans text-sm">
       <div className="bg-[#303030ff] text-white backdrop-blur-md rounded-xl shadow-xl p-4 opacity-90">
         <h3 className="text-base font-semibold border-b border-white/20 pb-1 mb-3">
           📍 {location}

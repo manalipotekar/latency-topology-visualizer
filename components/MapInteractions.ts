@@ -70,9 +70,9 @@ export function setupInteractions(
       );
     }
   });
-  map.on('mouseenter', 'latency-lines-layer', () => {
-  map.getCanvas().style.cursor = 'pointer';
-});
+//   map.on('mouseenter', 'latency-lines-layer', () => {
+//   map.getCanvas().style.cursor = 'pointer';
+// });
 // map.on('mouseleave', 'latency-lines-layer', () => {
 //   map.getCanvas().style.cursor = '';
 // });
@@ -85,6 +85,17 @@ export function setupInteractions(
         targetId: feature.properties.targetId
       });
       setSelectedFeature(null); // clear any point selection
+    }
+  });
+
+    map.on('mouseenter', 'datacenter-layer', (e) => {
+    map.getCanvas().style.cursor = 'pointer';
+    const feature = e.features?.[0];
+    if (feature?.properties?.id != null) {
+      map.setFeatureState(
+        { source: 'datacenters', id: feature.properties.id },
+        { highlight: true }
+      );
     }
   });
 
