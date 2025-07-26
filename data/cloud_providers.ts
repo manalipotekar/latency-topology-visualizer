@@ -1,4 +1,4 @@
-export const dataCenters = [
+export const cloudProviders = [
   // AWS
   {
     id: "aws-eu-central-2",
@@ -202,71 +202,4 @@ export const dataCenters = [
   }
 },
 
-  // Exchanges (Optional)
-  {
-    id: "Binance",
-    provider: "AWS",
-    location: "Tokyo",
-    region: "n/a",
-    type: "exchange",
-    coordinates: [139.6917, 35.6895],
-    latency: {
-      aws: 12,
-      gcp: 20,
-      azure: 18
-    }
-  },
-  {
-    id: "OKX",
-    provider: "Azure",
-    location: "Singapore",
-    region: "n/a",
-    type: "exchange",
-    coordinates: [103.8198, 1.3521],
-    latency: {
-      aws: 12,
-      gcp: 20,
-      azure: 18
-    }
-  },
-  {
-    id: "Bybit",
-    provider: "GCP",
-    location: "Amsterdam",
-    region: "n/a",
-    type: "exchange",
-    coordinates: [4.9041, 52.3676],
-    latency: {
-      aws: 12,
-      gcp: 20,
-      azure: 18
-    }
-  },
-  {
-    id: "Deribit",
-    provider: "AWS",
-    location: "Zurich",
-    region: "n/a",
-    type: "exchange",
-    coordinates: [8.5417, 47.3769],
-    latency: {
-      aws: 12,
-      gcp: 20,
-      azure: 18
-    },
-    
-  },
-//   {
-//   id: "Coinbase",
-//   provider: "AWS",
-//   type: "exchange",
-//   location: "Virginia, USA",
-//   region: "us-east-1",
-//   coordinates: [-77.4874, 39.0438],
-//   latency: {
-//     aws: 10,
-//     gcp: 15,
-//     azure: 12
-//   }
-// },
-];
+]
