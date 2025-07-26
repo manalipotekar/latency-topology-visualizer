@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import {
   LineChart,
   Line,
@@ -34,30 +34,32 @@ const LatencyChartPanel: React.FC<Props> = ({ sourceId, targetId }) => {
   const [timeRange, setTimeRange] = useState<TimeRange>("1h");
   const [latencyData, setLatencyData] = useState<LatencyDataPoint[]>([]);
 
-  const generateAndSetLatencyData = () => {
+  const generateAndSetLatencyData = useCallback(() => {
     if (selectedSource && selectedTarget) {
       const raw = generateLatencyData(selectedSource, selectedTarget, timeRange);
       const downsampled = downsampleData(raw);
       setLatencyData(downsampled);
     }
-  };
+  }, [selectedSource, selectedTarget, timeRange]);
 
-  // Initial Data Load & Update on Source/Target Change
   useEffect(() => {
     generateAndSetLatencyData();
-  }, [selectedSource, selectedTarget, timeRange]);
+  }, [generateAndSetLatencyData]);
 
   // Auto Refresh Every 5 seconds
   useEffect(() => {
     const intervalId = setInterval(() => {
       generateAndSetLatencyData();
-    }, 5000); // every 5 seconds
+    }, 5000);
 
-    return () => clearInterval(intervalId); // Cleanup on unmount
-  }, [selectedSource, selectedTarget, timeRange]);
+    return () => clearInterval(intervalId);
+  }, [generateAndSetLatencyData]);
 
   const stats = useMemo(() => {
     const latencies = latencyData.map((d) => d.latency);
+    if (latencies.length === 0) {
+      return { min: 0, max: 0, avg: 0 };
+    }
     return {
       min: Math.min(...latencies),
       max: Math.max(...latencies),
@@ -70,8 +72,6 @@ const LatencyChartPanel: React.FC<Props> = ({ sourceId, targetId }) => {
   return (
     <div className="w-full max-w-[300px] rounded-xl shadow-md text-sm text-white space-y-3">
       <h4 className="font-semibold text-base">Latency Trends</h4>
-
-      {/* Dropdowns */}
       <div className="flex gap-2 text-xs ">
         <select
           value={selectedSource}
@@ -84,7 +84,6 @@ const LatencyChartPanel: React.FC<Props> = ({ sourceId, targetId }) => {
             </option>
           ))}
         </select>
-
         <select
           value={selectedTarget}
           onChange={(e) => setSelectedTarget(e.target.value)}
@@ -97,8 +96,6 @@ const LatencyChartPanel: React.FC<Props> = ({ sourceId, targetId }) => {
           ))}
         </select>
       </div>
-
-      {/* Time Range Buttons */}
       <div className="flex flex-wrap gap-2 text-xs">
         {timeRanges.map((range) => (
           <button
@@ -114,8 +111,6 @@ const LatencyChartPanel: React.FC<Props> = ({ sourceId, targetId }) => {
           </button>
         ))}
       </div>
-
-      {/* Chart */}
       <ResponsiveContainer className="-ml-5" width="100%" height={200}>
         <LineChart data={latencyData}>
           <CartesianGrid strokeDasharray="3 3" stroke="#555" />
@@ -149,11 +144,9 @@ const LatencyChartPanel: React.FC<Props> = ({ sourceId, targetId }) => {
           />
         </LineChart>
       </ResponsiveContainer>
-
-      {/* Stats */}
       <div className="text-xs font-bold text-gray-300 -mt-4">
         <p>
-          Min <span style={{ color: "#09cc13ff" }}>{stats.min.toFixed(2)} ms</span>
+          Min: <span style={{ color: "#09cc13ff" }}>{stats.min.toFixed(2)} ms</span>
         </p>
         <p>
           Max: <span style={{ color: "#f97316" }}>{stats.max.toFixed(2)} ms</span>

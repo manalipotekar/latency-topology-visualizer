@@ -28,7 +28,6 @@ const MapStatsPanel: React.FC<MapStatsPanelProps> = ({ map }) => {
     };
 
     const onSourceData = (e: mapboxgl.MapSourceDataEvent) => {
-      // Only proceed if our sources are loaded
       if (
         e.sourceId === "datacenters" &&
         map.isSourceLoaded("datacenters")

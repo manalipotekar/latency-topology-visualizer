@@ -87,20 +87,19 @@ const MapControlPanel: React.FC<MapControlPanelProps> = ({
 <div
   className={`
     absolute z-50 bg-gray-900 bg-opacity-90 backdrop-blur-sm border border-gray-700
-    text-white rounded-xl shadow-lg font-sans text-sm overflow-y-auto thin-scrollbar
+    text-white rounded-md shadow-lg font-sans text-sm overflow-y-auto thin-scrollbar
     transition-all duration-300 ease-in-out
     
     w-full ${collapsed ? "h-14" : "h-1/2"} bottom-0 left-0
-    lg:w-[310px] lg:h-auto lg:top-2 lg:left-2
+    lg:w-[310px] lg:h-auto lg:top-0 lg:left-0
     `}
 >
-        {/* Tabs */}
         <div className="flex border-b border-gray-700">
           {TABS.map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
- className={`flex-1 px-3 py-2 text-sm font-medium transition-all ${
+ className={`flex-1 px-3 py-2 text-sm font-medium transition-all  ${
   activeTab === tab
     ? "bg-gray-700 text-gray-100 border-b-1 border-pink-500"
     : "bg-gray-900 text-gray-50 hover:bg-gray-800"
@@ -111,6 +110,7 @@ const MapControlPanel: React.FC<MapControlPanelProps> = ({
             </button>
           ))}
         </div>
+
 
         {/* Content */}
         <div className="p-4 h-full overflow-y-auto space-y-2 thin-scrollbar">

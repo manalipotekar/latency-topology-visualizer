@@ -1,9 +1,9 @@
-import MapBoxExample from "@/components/MapBoxExample";
+import MapCanvas from "@/components/MapCanvas";
 
 export default function Home() {
   return (
     <main>
-     <MapBoxExample />
+     <MapCanvas />
     </main>
   );
 }

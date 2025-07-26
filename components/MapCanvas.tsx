@@ -2,19 +2,17 @@
 import React, { useEffect, useRef, useState } from "react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
-
-import { buildGeoJsonPoints, buildGeoJsonLines, buildGeoJsonFrom } from "@/utils/geojsonBuilders";
+import { buildGeoJsonPoints, buildGeoJsonLines } from "@/utils/geojsonBuilders";
 import { setupLayers } from "./MapLayer";
 import { setupInteractions } from "./MapInteractions";
-import MapOverlay from "./MapOverlay";
+import NodeInfoOverlay from "./NodeInfoOverlay";
 import { getProviderColor } from "@/utils/utils";
 import MapControlPanel from "./SidePanel";
-import { dataCenters } from "@/data/exchange_servers";
 import MapStatsPanel from "./MapStatsPanel";
 
 mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN as string;
 
-const MapBoxExample: React.FC = () => {
+const MapCanvas: React.FC = () => {
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<mapboxgl.Map | null>(null);
   const [selectedFeature, setSelectedFeature] = useState(null);
@@ -33,22 +31,22 @@ const MapBoxExample: React.FC = () => {
   } | null>(null);
 
   const [toggles, setToggles] = useState({
-  realTime: true,
-  historical: true,
-  regions: false
-});
+    realTime: true,
+    historical: true,
+    regions: false,
+  });
 
-const handleToggleChange = (key: string, value: boolean) => {
-  setToggles((prev) => ({ ...prev, [key]: value }));
+  const handleToggleChange = (key: string, value: boolean) => {
+    setToggles((prev) => ({ ...prev, [key]: value }));
 
-  if (mapRef.current) {
-    mapRef.current.setLayoutProperty(
-      key === "historical" ? "latency-lines-layer" : "some-layer",
-      "visibility",
-      value ? "visible" : "none"
-    );
-  }
-};
+    if (mapRef.current) {
+      mapRef.current.setLayoutProperty(
+        key === "historical" ? "latency-lines-layer" : "some-layer",
+        "visibility",
+        value ? "visible" : "none"
+      );
+    }
+  };
 
   useEffect(() => {
     const map = new mapboxgl.Map({
@@ -78,7 +76,7 @@ const handleToggleChange = (key: string, value: boolean) => {
         setSelectedFeature,
         selectedFeatureRef,
         setSelectedConnection,
-        
+        setHoveredFeature
       );
     });
     map.setBearing(30);
@@ -94,29 +92,13 @@ const handleToggleChange = (key: string, value: boolean) => {
     );
     const updateLatencyData = () => {
       const updatedLines = buildGeoJsonLines();
-      const source = mapRef.current?.getSource("latency-lines") as mapboxgl.GeoJSONSource;
+      const source = mapRef.current?.getSource(
+        "latency-lines"
+      ) as mapboxgl.GeoJSONSource;
       if (source) source.setData(updatedLines);
     };
 
     const intervalId = setInterval(updateLatencyData, 7000);
-
-    map.on("mousemove", "datacenter-layer", (e) => {
-      const feature = e.features?.[0];
-      if (!feature?.properties) return;
-
-      const { id, location, provider } = feature.properties;
-      setHoveredFeature({
-        id,
-        location,
-        provider,
-        x: e.originalEvent.pageX,
-        y: e.originalEvent.pageY,
-      });
-    });
-
-    map.on("mouseleave", "datacenter-layer", () => {
-      setHoveredFeature(null);
-    });
 
     return () => {
       clearInterval(intervalId);
@@ -132,32 +114,28 @@ const handleToggleChange = (key: string, value: boolean) => {
     <div className="relative w-full h-screen">
       <div ref={mapContainerRef} className="w-full h-full" />
 
-<MapControlPanel 
-  onFilterChange={(filters: any) => {
-  }}
-  toggles={toggles}
-  onToggleChange={handleToggleChange}
-  selectedConnection={selectedConnection}
-    onDataCenterSelect={({ longitude, latitude }) => {
-    if (mapRef.current) {
-      mapRef.current.flyTo({
-        center: [longitude, latitude],
-        zoom: 6.0,
-        speed: 1.2,
-        curve: 1.4,
-        essential: true,
-      });
-    }
-  }}
-/>
-      <div className="">
+      <MapControlPanel
+        onFilterChange={() => {}}
+        toggles={toggles}
+        onToggleChange={handleToggleChange}
+        selectedConnection={selectedConnection}
+        onDataCenterSelect={({ longitude, latitude }) => {
+          if (mapRef.current) {
+            mapRef.current.flyTo({
+              center: [longitude, latitude],
+              zoom: 6.0,
+              speed: 1.2,
+              curve: 1.4,
+              essential: true,
+            });
+          }
+        }}
+      />
 
-<MapStatsPanel map={mapRef.current} />
-      </div>
-<div className="">
+      <MapStatsPanel map={mapRef.current} />
 
-      <MapOverlay selectedFeature={selectedFeature} />
-</div>
+      <NodeInfoOverlay selectedFeature={selectedFeature} />
+
       {hoveredFeature && (
         <div
           className="absolute z-50 px-3 py-2 text-sm text-white bg-gray-800 rounded shadow-md pointer-events-none"
@@ -167,12 +145,14 @@ const handleToggleChange = (key: string, value: boolean) => {
           }}
         >
           <div className="flex items-center gap-2 font-semibold">
-  <span
-    className="w-2.5 h-2.5 rounded-full inline-block"
-    style={{ backgroundColor: getProviderColor(hoveredFeature.provider) }}
-  />
-  {hoveredFeature.id}
-</div>
+            <span
+              className="w-2.5 h-2.5 rounded-full inline-block"
+              style={{
+                backgroundColor: getProviderColor(hoveredFeature.provider),
+              }}
+            />
+            {hoveredFeature.id}
+          </div>
 
           <div>{hoveredFeature.location}</div>
           <div className="text-gray-300 text-xs">{hoveredFeature.provider}</div>
@@ -182,4 +162,4 @@ const handleToggleChange = (key: string, value: boolean) => {
   );
 };
 
-export default MapBoxExample;
+export default MapCanvas;

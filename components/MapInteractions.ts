@@ -1,5 +1,4 @@
 
-import { on } from 'events';
 import mapboxgl from 'mapbox-gl';
 
 export function setupInteractions(
@@ -7,6 +6,7 @@ export function setupInteractions(
   setSelectedFeature: (f: any) => void,
   selectedFeatureRef: React.MutableRefObject<any>,
   setSelectedConnection: (pair: { sourceId: string; targetId: string } | null) => void,
+  setHoveredFeature: (f: { id: string; location: string; provider: string; x: number; y: number } | null) => void
 ) {
   map.on('click', 'datacenter-layer', (e) => {
     const feature = e.features?.[0];
@@ -84,7 +84,7 @@ map.on('mouseleave', 'latency-lines-layer', () => {
         sourceId: feature.properties.sourceId,
         targetId: feature.properties.targetId
       });
-      setSelectedFeature(null); // clear any point selection
+      setSelectedFeature(null);
     }
   });
 
@@ -98,6 +98,24 @@ map.on('mouseleave', 'latency-lines-layer', () => {
       );
     }
   });
+
+      map.on("mousemove", "datacenter-layer", (e) => {
+        const feature = e.features?.[0];
+        if (!feature?.properties) return;
+  
+        const { id, location, provider } = feature.properties;
+        setHoveredFeature({
+          id,
+          location,
+          provider,
+          x: e.originalEvent.pageX,
+          y: e.originalEvent.pageY,
+        });
+      });
+  
+      map.on("mouseleave", "datacenter-layer", () => {
+        setHoveredFeature(null);
+      });
 
 
 }

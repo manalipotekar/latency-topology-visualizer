@@ -1,6 +1,6 @@
 import React from 'react';
 
-interface MapOverlayProps {
+interface NodeInfoOverlayProps {
   selectedFeature?: {
     properties?: {
       id?: string;
@@ -14,7 +14,7 @@ interface MapOverlayProps {
 }
 
 
-const MapOverlay: React.FC<MapOverlayProps> = ({ selectedFeature }) => {
+const NodeInfoOverlay: React.FC<NodeInfoOverlayProps> = ({ selectedFeature }) => {
   if (!selectedFeature) return null;
 
   const properties = selectedFeature.properties || {};
@@ -87,4 +87,4 @@ const latencyNode: React.ReactNode = (() => {
   );
 };
 
-export default MapOverlay;
+export default NodeInfoOverlay;
