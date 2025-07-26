@@ -80,45 +80,6 @@ export const cloudProviders = [
       azure: 20
     }
   },
-   {
-    id: "gcp-asia-southeast1",
-    provider: "GCP",
-    location: "Singapore",
-    region: "asia-southeast1",
-      type: "cloud",
-    coordinates: [103.8198, 1.3521],
-    latency: {
-      aws: 19,
-      gcp: 15,
-      azure: 22
-    }
-  },
-  {
-    id: "gcp-europe-west1",
-    provider: "GCP",
-    location: "Belgium",
-    region: "europe-west1",
-      type: "cloud",
-    coordinates: [4.4699, 50.5039],
-    latency: {
-      aws: 20,
-      gcp: 14,
-      azure: 23
-    }
-  },
-  {
-    id: "gcp-europe-west6",
-    provider: "GCP",
-    location: "Zurich",
-    region: "europe-west6",
-      type: "cloud",
-    coordinates: [8.5417, 47.3769],
-    latency: {
-      aws: 17,
-      gcp: 11,
-      azure: 21
-    }
-  },
   {
   id: "gcp-us-central1",
   provider: "GCP",

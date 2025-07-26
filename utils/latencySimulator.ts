@@ -4,6 +4,13 @@ export interface LatencyDataPoint {
   timestamp: number; // Unix timestamp (ms)
   latency: number;   // Latency in ms
 }
+export const downsampleData = (data: LatencyDataPoint[], maxPoints = 10) => {
+
+  if (data.length <= maxPoints) return data;
+  const step = Math.ceil(data.length / maxPoints);
+  return data.filter((_, i) => i % step === 0);
+};
+
 
 export function generateLatencyData(
   sourceId: string,
@@ -26,8 +33,6 @@ export function generateLatencyData(
     const latency = 20 + Math.random() * 80; // random latency between 20ms and 100ms
     data.push({ timestamp, latency });
   }
-  console.log(`Generated ${count} data points for ${sourceId} ➝ ${targetId} (${range})`);
-  console.log("Latency data:", data);
 
   return data;
 }

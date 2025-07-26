@@ -110,7 +110,7 @@ export function setupLayers(map: mapboxgl.Map) {
     'line-join': 'round',
   },
   paint: {
-    'line-width': 2,  // Slightly wider than base
+    'line-width': 3,  // Slightly wider than base
     'line-opacity': 0.7,
     'line-gradient': [
       'interpolate',

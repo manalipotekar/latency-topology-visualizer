@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
   LineChart,
   Line,
@@ -10,62 +10,105 @@ import {
   CartesianGrid,
 } from "recharts";
 import {
+  downsampleData,
   generateLatencyData,
   LatencyDataPoint,
   TimeRange,
 } from "@/utils/latencySimulator";
+import { dataCenters } from "@/data/exchange_servers";
+
 interface Props {
-  sourceId: string;
-  targetId: string;
+  sourceId?: string;
+  targetId?: string;
 }
 
 const timeRanges: TimeRange[] = ["1h", "24h", "7d", "30d"];
 
 const LatencyChartPanel: React.FC<Props> = ({ sourceId, targetId }) => {
+  const availableNodes = useMemo(() => dataCenters.map((dc) => dc.id), []);
+
+  const [selectedSource, setSelectedSource] = useState(sourceId || availableNodes[0]);
+  const [selectedTarget, setSelectedTarget] = useState(
+    targetId || availableNodes[1] || availableNodes[0]
+  );
   const [timeRange, setTimeRange] = useState<TimeRange>("1h");
   const [latencyData, setLatencyData] = useState<LatencyDataPoint[]>([]);
 
-  useEffect(() => {
-    const data = generateLatencyData(sourceId, targetId, timeRange);
-    console.log("Generated latency data:", data);
-    setLatencyData(data);
-  }, [sourceId, targetId, timeRange]);
-
-  const stats = {
-    min: Math.min(...latencyData.map((d) => d.latency)),
-    max: Math.max(...latencyData.map((d) => d.latency)),
-    avg: +(
-      latencyData.reduce((acc, d) => acc + d.latency, 0) / latencyData.length
-    ).toFixed(2),
+  const generateAndSetLatencyData = () => {
+    if (selectedSource && selectedTarget) {
+      const raw = generateLatencyData(selectedSource, selectedTarget, timeRange);
+      const downsampled = downsampleData(raw);
+      setLatencyData(downsampled);
+    }
   };
 
-  return (
-    <div
-      style={{
-        background: "#303030ff",
-        padding: 16,
-        borderRadius: 8,
-        boxShadow: "0 2px 10px rgba(0,0,0,0.2)",
-        width: 400,
-        opacity: 0.8,
-      }}
-    >
-      <h4 className="pb-1">
-        Latency Trends: {sourceId} ➝ {targetId}
-      </h4>
+  // Initial Data Load & Update on Source/Target Change
+  useEffect(() => {
+    generateAndSetLatencyData();
+  }, [selectedSource, selectedTarget, timeRange]);
 
-      {/* Time Range Selector */}
-      <div className="mb-2  flex flex-wrap gap-2">
+  // Auto Refresh Every 5 seconds
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      generateAndSetLatencyData();
+    }, 5000); // every 5 seconds
+
+    return () => clearInterval(intervalId); // Cleanup on unmount
+  }, [selectedSource, selectedTarget, timeRange]);
+
+  const stats = useMemo(() => {
+    const latencies = latencyData.map((d) => d.latency);
+    return {
+      min: Math.min(...latencies),
+      max: Math.max(...latencies),
+      avg: +(
+        latencies.reduce((acc, val) => acc + val, 0) / latencies.length
+      ).toFixed(2),
+    };
+  }, [latencyData]);
+
+  return (
+    <div className="w-full max-w-[300px] rounded-xl shadow-md text-sm text-white space-y-3">
+      <h4 className="font-semibold text-base">Latency Trends</h4>
+
+      {/* Dropdowns */}
+      <div className="flex gap-2 text-xs ">
+        <select
+          value={selectedSource}
+          onChange={(e) => setSelectedSource(e.target.value)}
+          className="flex-1 w-full px-2 py-1 thin-scrollbar rounded-[8px] bg-[#404040] text-white"
+        >
+          {availableNodes.map((id) => (
+            <option key={id} value={id}>
+              {id}
+            </option>
+          ))}
+        </select>
+
+        <select
+          value={selectedTarget}
+          onChange={(e) => setSelectedTarget(e.target.value)}
+          className="flex-1 w-full px-2 py-1 thin-scrollbar rounded-[8px] bg-[#404040] text-white"
+        >
+          {availableNodes.map((id) => (
+            <option key={id} value={id}>
+              {id}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      {/* Time Range Buttons */}
+      <div className="flex flex-wrap gap-2 text-xs">
         {timeRanges.map((range) => (
           <button
             key={range}
             onClick={() => setTimeRange(range)}
-            className={`px-3 py-1 rounded cursor-pointer transition-opacity duration-200
-        ${
-          timeRange === range
-            ? "bg-blue-600 text-white opacity-100"
-            : "bg-gray-50 text-black opacity-70 hover:opacity-100"
-        }`}
+            className={`px-3 py-1 rounded-[8px] transition ${
+              timeRange === range
+                ? "bg-pink-500 text-white"
+                : "bg-[#404040] text-gray-300 hover:bg-pink-600 hover:text-white"
+            }`}
           >
             {range}
           </button>
@@ -73,48 +116,50 @@ const LatencyChartPanel: React.FC<Props> = ({ sourceId, targetId }) => {
       </div>
 
       {/* Chart */}
-      <ResponsiveContainer width="100%" height={200}>
+      <ResponsiveContainer className="-ml-5" width="100%" height={200}>
         <LineChart data={latencyData}>
-          <CartesianGrid strokeDasharray="3 3" />
+          <CartesianGrid strokeDasharray="3 3" stroke="#555" />
           <XAxis
             dataKey="timestamp"
             tickFormatter={(ts) => new Date(ts).toLocaleTimeString()}
+            tick={{ fill: "#ccc", fontSize: 11 }}
           />
-          <YAxis unit="ms" />
+          <YAxis
+            unit="ms"
+            tick={{ fill: "#ccc", fontSize: 11 }}
+            domain={["auto", "auto"]}
+          />
           <Tooltip
             labelFormatter={(ts) => new Date(ts).toLocaleString()}
             formatter={(value: number) => [`${value.toFixed(2)} ms`, "Latency"]}
             contentStyle={{
-              backgroundColor: "#2f2f2f", // dark gray
-              color: "#ffffff",
-              borderRadius: "8px",
+              backgroundColor: "#222",
               border: "none",
-            }}
-            itemStyle={{
-              color: "#ffffff",
+              borderRadius: 8,
+              color: "#fff",
             }}
           />
-
           <Line
             type="monotone"
             dataKey="latency"
-            stroke="#0070f3"
+            stroke="#ee15a6ff"
             strokeWidth={2}
-            dot={false}
+            dot={{ r: 2, strokeWidth: 0.5 }}
+            activeDot={{ r: 4 }}
           />
         </LineChart>
       </ResponsiveContainer>
 
       {/* Stats */}
-      <div style={{ marginTop: 1, color: "#e7e7e7ff" }}>
+      <div className="text-xs font-bold text-gray-300 -mt-4">
         <p>
-          <strong>Min:</strong> {stats.min.toFixed(2)} ms
+          Min <span style={{ color: "#09cc13ff" }}>{stats.min.toFixed(2)} ms</span>
         </p>
         <p>
-          <strong>Max:</strong> {stats.max.toFixed(2)} ms
+          Max: <span style={{ color: "#f97316" }}>{stats.max.toFixed(2)} ms</span>
         </p>
         <p>
-          <strong>Avg:</strong> {stats.avg} ms
+          Avg: <span style={{ color: "#e2f916ff" }}>{stats.avg} ms</span>
         </p>
       </div>
     </div>

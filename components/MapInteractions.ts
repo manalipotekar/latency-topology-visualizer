@@ -1,19 +1,19 @@
 
+import { on } from 'events';
 import mapboxgl from 'mapbox-gl';
 
 export function setupInteractions(
   map: mapboxgl.Map,
   setSelectedFeature: (f: any) => void,
   selectedFeatureRef: React.MutableRefObject<any>,
-  setSelectedConnection: (pair: { sourceId: string; targetId: string } | null) => void
+  setSelectedConnection: (pair: { sourceId: string; targetId: string } | null) => void,
 ) {
   map.on('click', 'datacenter-layer', (e) => {
     const feature = e.features?.[0];
     if (!feature || feature.properties?.id == null) return;
-      // 👉 Handle connection logic
     if (feature) {
       setSelectedFeature(feature);
-      setSelectedConnection(null); // clear any line selection
+      setSelectedConnection(null);
     }
 
     if (selectedFeatureRef.current) {
@@ -70,12 +70,12 @@ export function setupInteractions(
       );
     }
   });
-//   map.on('mouseenter', 'latency-lines-layer', () => {
-//   map.getCanvas().style.cursor = 'pointer';
-// });
-// map.on('mouseleave', 'latency-lines-layer', () => {
-//   map.getCanvas().style.cursor = '';
-// });
+  map.on('mouseenter', 'latency-lines-layer', () => {
+  map.getCanvas().style.cursor = 'pointer';
+});
+map.on('mouseleave', 'latency-lines-layer', () => {
+  map.getCanvas().style.cursor = '';
+});
     map.on('click', 'latency-lines-layer', (e) => {
     const feature = e.features?.[0];
     if (feature?.properties?.sourceId && feature?.properties?.targetId) {
@@ -98,29 +98,6 @@ export function setupInteractions(
       );
     }
   });
-
-
-  // animatePulseLines();
-
-function animatePulseLines() {
-  let phase = 0;
-  function frame() {
-    phase = (phase + 0.015) % 1;
-
-    map.setPaintProperty('latency-lines-layer', 'line-gradient', [
-      'interpolate',
-      ['linear'],
-      ['line-progress'],
-      0, 'rgba(207, 0, 0, 0)',
-      phase, 'rgba(33, 29, 29, 1)',
-      Math.min(phase + 0.1, 1), 'rgba(255,255,255,0)'
-    ]);
-
-    requestAnimationFrame(frame);
-  }
-
-  frame();
-}
 
 
 }
