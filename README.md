@@ -83,7 +83,7 @@ Visit [http://localhost:3000](http://localhost:3000) to see it in action.
 * **Next.js 14+ (App Directory)**
 * **Mapbox GL JS**
 * **React & TypeScript**
-* **Rec\*\*\*\*harts** (Latency Trends Chart)
+* **Recharts** (Latency Trends Chart)
 * **Zustand** (State Management)
 * **Tailwind CSS**
 * **Geist Sans & Geist Mono Fonts**
