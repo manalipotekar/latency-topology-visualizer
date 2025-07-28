@@ -110,9 +110,6 @@ const MapControlPanel: React.FC<MapControlPanelProps> = ({
             </button>
           ))}
         </div>
-
-
-        {/* Content */}
         <div className="p-4 h-full overflow-y-auto space-y-2 thin-scrollbar">
           {activeTab === "Legend" && (
             <>
@@ -149,10 +146,7 @@ const MapControlPanel: React.FC<MapControlPanelProps> = ({
                   High (&gt; 60ms)
                 </li>
               </ul>
-              {/* Uncomment and style if needed */}
               <hr className="border-gray-700" />
-
-              
                 <LatencyChartPanel
                   sourceId={selectedConnection?.sourceId}
                   targetId={selectedConnection?.targetId}

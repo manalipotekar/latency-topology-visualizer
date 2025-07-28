@@ -22,15 +22,15 @@ export const buildGeoJsonPoints = (): GeoJSON.FeatureCollection => ({
     type: 'Feature',
     geometry: {
       type: 'Point',
-      coordinates: dc.coordinates, // Coordinates will now be used directly
+      coordinates: dc.coordinates, 
     },
     properties: {
       id: dc.id,
       provider: dc.provider,
       location: dc.location,
-      latency: dc.latency, // Contains latency for aws, gcp, azure
-      region: dc.region, // Region for the data center
-      type: dc.type, // Type of the data center (e.g., cloud, exchange)
+      latency: dc.latency,
+      region: dc.region,
+      type: dc.type,
     },
   })),
 });
@@ -43,7 +43,7 @@ export function buildGeoJsonLines(): FeatureCollection<LineString> {
 
   exchanges.forEach(exchange => {
     cloudRegions.forEach(cloud => {
-      const latency = Math.floor(Math.random() * 300); // Simulated latency
+      const latency = Math.floor(Math.random() * 300);
       features.push({
         type: 'Feature',
         geometry: {

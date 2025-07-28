@@ -131,11 +131,8 @@ const MapCanvas: React.FC = () => {
           }
         }}
       />
-
       <MapStatsPanel map={mapRef.current} />
-
       <NodeInfoOverlay selectedFeature={selectedFeature} />
-
       {hoveredFeature && (
         <div
           className="absolute z-50 px-3 py-2 text-sm text-white bg-gray-800 rounded shadow-md pointer-events-none"
